@@ -1193,7 +1193,7 @@
         <div class="about-block-title">⛽ بطاقة البنزين</div>
         <div class="about-block-body">
           اضغط على أيقونة ⛽ في أعلى التقويم لتفعيل تلوين حصص البنزين.<br><br>
-          • تُلوَّن أيام التقويم بـ ٥ ألوان تمثل دورات الاستلام كل ٥ أيام ابتداءً من ٢٥/٥/٢٠٢٥.<br><br>
+          • تُلوَّن أيام التقويم بـ ٥ ألوان تمثل دورات الاستلام كل ٥ أيام.<br><br>
           • يظهر شريط أسفل التقويم يعرض موعد استلام الحصة القادمة مع عداد تنازلي.<br><br>
           • لتحديد يوم التفويل يدوياً: اضغط على اليوم مرتين، فتتغير خلفيته إلى برتقالي بارز مع أيقونة ⛽.<br><br>
           • الضغط مرة ثالثة على نفس اليوم يلغي التعليم.
@@ -2122,13 +2122,9 @@ function updateFuelInfoBar() {
   if (!fuelCalActive) return;
   const bar = document.getElementById('fuelInfoBar');
   bar.classList.add('visible');
-
-  // Next fuel date
   const nextFuelDate = getNextFuelDate();
   const msToNext = nextFuelDate - new Date();
   document.getElementById('fuelInfoNextCountdown').textContent = formatCountdownFull(Math.max(0, msToNext));
-
-  // Manually marked fuel date
   const markedRow = document.getElementById('fuelMarkedRow');
   const markedDisplay = document.getElementById('fuelMarkedDisplay');
   if (fuelMarkedDate) {
