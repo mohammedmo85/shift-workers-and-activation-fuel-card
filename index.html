@@ -4,7 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>التقويم الميلادي والهجري</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Tajawal:wght@300;400;500;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  /* خطوط النظام - تعمل بدون إنترنت */
+  @font-face {
+    font-family: 'Tajawal';
+    src: local('Segoe UI'), local('Tahoma'), local('Arial');
+  }
+  @font-face {
+    font-family: 'Amiri';
+    src: local('Traditional Arabic'), local('Arabic Typesetting'), local('Tahoma');
+  }
+  @font-face {
+    font-family: 'Playfair Display';
+    src: local('Georgia'), local('Times New Roman'), local('serif');
+  }
+</style>
 <style>
   :root {
     --bg: #0d0d14;
@@ -25,7 +39,7 @@
   body {
     background: var(--bg);
     color: var(--light);
-    font-family: 'Tajawal', sans-serif;
+    font-family: 'Tajawal', 'Segoe UI', Tahoma, Arial, sans-serif;
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -53,7 +67,7 @@
   }
 
   .calendar-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
     font-size: 12px;
     letter-spacing: 4px;
     color: var(--accent);
@@ -78,7 +92,7 @@
     border-radius: 24px;
     border: none;
     cursor: pointer;
-    font-family: 'Tajawal', sans-serif;
+    font-family: 'Tajawal', 'Segoe UI', Tahoma, Arial, sans-serif;
     font-size: 13px;
     font-weight: 500;
     transition: all 0.25s ease;
@@ -281,7 +295,7 @@
     border-radius: 20px;
     cursor: pointer;
     font-size: 12px;
-    font-family: 'Tajawal', sans-serif;
+    font-family: 'Tajawal', 'Segoe UI', Tahoma, Arial, sans-serif;
     font-weight: 500;
     transition: all 0.2s;
   }
@@ -513,7 +527,7 @@
     font-size: 16px;
     font-weight: 700;
     color: var(--muted);
-    font-family: 'Playfair Display', serif;
+    font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
     min-width: 48px;
     letter-spacing: 1px;
   }
@@ -534,7 +548,7 @@
     background: transparent;
     border: 1px solid var(--accent);
     color: var(--accent);
-    font-family: 'Tajawal', sans-serif;
+    font-family: 'Tajawal', 'Segoe UI', Tahoma, Arial, sans-serif;
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
@@ -594,7 +608,7 @@
     gap: 16px;
   }
   .about-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
     font-size: 20px;
     color: var(--accent2);
     text-align: center;
@@ -714,7 +728,7 @@
     font-size: 14px;
     font-weight: 700;
     color: #e0a84a;
-    font-family: 'Playfair Display', serif;
+    font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
   }
   .about-fuel-progress-wrap { margin-bottom: 10px; }
   .about-fuel-progress-labels {
@@ -761,7 +775,7 @@
     margin-bottom: 6px;
   }
   .about-dev-name {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
     font-size: 17px;
     color: var(--accent2);
     margin-bottom: 12px;
@@ -852,7 +866,7 @@
     text-align: center;
     font-size: 24px;
     font-weight: 700;
-    font-family: 'Playfair Display', serif;
+    font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
     color: var(--accent2);
     margin-top: 6px;
     letter-spacing: 1px;
@@ -899,7 +913,7 @@
     border-radius: 10px;
     padding: 8px 12px;
     color: var(--light);
-    font-family: 'Tajawal', sans-serif;
+    font-family: 'Tajawal', 'Segoe UI', Tahoma, Arial, sans-serif;
     font-size: 13px;
     outline: none;
     text-align: center;
@@ -914,7 +928,7 @@
     border: 1px solid var(--accent);
     background: transparent;
     color: var(--accent);
-    font-family: 'Tajawal', sans-serif;
+    font-family: 'Tajawal', 'Segoe UI', Tahoma, Arial, sans-serif;
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
@@ -1048,13 +1062,14 @@
     border-radius: 20px;
     padding: 3px 10px;
     font-size: 11px;
-    font-family: 'Tajawal', sans-serif;
+    font-family: 'Tajawal', 'Segoe UI', Tahoma, Arial, sans-serif;
     cursor: pointer;
     transition: all 0.2s ease;
     white-space: nowrap;
     flex-shrink: 0;
   }
   .fuel-info-cancel:hover { background: rgba(232,122,122,0.15); border-color: #e87a7a; }
+
 </style>
 </head>
 <body>
@@ -1152,7 +1167,7 @@
 
       <div class="about-block about-dev-block">
         <div class="about-dev-label">إعداد وتصميم</div>
-        <div class="about-dev-name" style="font-family:'Amiri','Scheherazade New',serif;font-size:20px;letter-spacing:1px;">المهندس محمد محي الدين عمر الجباري</div>
+        <div class="about-dev-name" style="font-family:'Amiri','Traditional Arabic','Arabic Typesetting',Tahoma,serif;font-size:20px;letter-spacing:1px;">المهندس محمد محي الدين عمر الجباري</div>
         <div class="about-dev-divider"></div>
         <div class="about-dev-row">📞 <a class="about-phone" href="tel:07701264441">07701264441</a></div>
       </div>
