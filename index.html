@@ -1481,7 +1481,6 @@
     <div class="alarm-combo-body" id="alarmComboBody">
       <div class="alarm-list" id="alarmList"></div>
       <button class="alarm-set-all" id="alarmToggleAllBtn" onclick="setAllAlarms()">🔔 تفعيل جميع المنبهات</button>
-      <button class="alarm-set-all" style="margin-top:6px;border-color:#e0a84a;color:#e0a84a;" onclick="previewFuelOverlay()">⛽ معاينة تنبيه البنزين</button>
       <div class="alarm-status" id="alarmStatus"></div>
 
       <!-- نغمة الرنين -->
@@ -1501,12 +1500,7 @@
         <!-- زر الملفات: يفتح مدير الملفات -->
         <input type="file" id="ringtoneFileInput" accept=".mp3,.wav,.ogg,.m4a,.aac,.flac,.opus,audio/*" style="display:none" onchange="loadCustomRingtone(this)">
         <div class="ringtone-custom-name" id="ringtoneCustomName"></div>
-        <div style="height:10px;"></div>
-        <div class="ringtone-label" style="display:flex;align-items:center;justify-content:space-between;">
-          <span>⛽ نغمة حصة البنزين</span>
-          <button id="fuelTonePreviewBtn" onclick="previewFuelTone()" style="padding:4px 12px;border-radius:20px;border:1px solid rgba(224,168,74,0.5);background:transparent;color:#e0a84a;font-size:11px;cursor:pointer;font-family:inherit;transition:all 0.2s;">▶ معاينة</button>
-        </div>
-        <div style="font-size:11px;color:var(--muted);padding:6px 2px 0;opacity:0.75;">نغمة تصاعدية مميزة — تُشغَّل تلقائياً عند تنبيه استلام الحصة</div>
+
       </div>
     </div>
   </div>
@@ -2143,51 +2137,8 @@ function renderAlarms() {
   ALARMS.forEach(a => {
     const item = document.createElement('div');
 
-    // Fuel alarm: special styling
-    if (a.fuelAlarm) {
-      const nextFuel = getNextFuelDate();
-      const dayNames2 = ['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
-      const todayMidnight = new Date(); todayMidnight.setHours(0,0,0,0);
-      const diffToNext = Math.round((nextFuel - todayMidnight) / 86400000);
-      const nextFuelStr = `${nextFuel.getDate()}/${nextFuel.getMonth()+1}/${nextFuel.getFullYear()}`;
-      let fuelStatus = '';
-      if (diffToNext === 0) {
-        fuelStatus = `<span style="color:#6db87a;font-weight:700">● اليوم يوم الاستلام!</span>`;
-      } else if (diffToNext === 1) {
-        fuelStatus = `<span style="color:var(--accent2)">⚠️ غداً يوم الاستلام — ${nextFuelStr}</span>`;
-      } else {
-        fuelStatus = `<span style="color:var(--muted)">الاستلام القادم: ${nextFuelStr} (بعد ${diffToNext} يوم)</span>`;
-      }
-      const isFuelDay = isFuelAlarmDay();
-      item.className = 'alarm-item fuel-alarm-item active-alarm active-fuel-alarm' + (isFuelDay ? ' fuel-day-active' : '');
-      item.id = 'item-' + a.id;
-
-      // Check if alarm fires today (fuel day)
-      const alarmToday2 = new Date();
-      alarmToday2.setHours(a.hour, a.min, 0, 0);
-      const msLeft2 = alarmToday2 - now3;
-      const upcoming2 = isFuelDay && msLeft2 > 0 && msLeft2 < 3 * 60 * 60 * 1000;
-      const timeUntil2 = msLeft2 > 0 ? formatCountdown(msLeft2) : '';
-
-      item.innerHTML = `
-        <div class="alarm-item-info">
-          <span style="font-size:20px">⛽</span>
-          <div>
-            <div class="alarm-time active-alarm" style="font-size:15px;color:#e0a84a">
-              تنبيه حصة البنزين
-            </div>
-            <div class="alarm-desc" style="margin-top:2px">
-              كل ٥ أيام من 25/5/2025 — تنبيه الساعة ١٢:٠٠
-            </div>
-            <div class="alarm-desc" style="margin-top:3px">${fuelStatus}</div>
-            ${upcoming2 ? `<div class="alarm-desc" style="color:var(--accent2);margin-top:2px">🔔 بعد ${timeUntil2}</div>` : ''}
-            ${isFuelDay && !upcoming2 && now3.getHours() >= a.hour ? `<div class="alarm-desc" style="color:#6db87a;margin-top:2px">✅ تم إرسال التنبيه اليوم</div>` : ''}
-          </div>
-        </div>
-      `;
-      list.appendChild(item);
-      return;
-    }
+    // Fuel alarm: skip rendering in list
+    if (a.fuelAlarm) return;
 
     item.className = 'alarm-item' + (alarmStates[a.id] ? ' active-alarm' : '');
     item.id = 'item-' + a.id;
@@ -2618,9 +2569,10 @@ function checkAlarms() {
     }
 
     // ③ صوت متكرر 3 مرات
+    alarmDismissed = false;
     playAlarmSound(!!a.fuelAlarm);
-    setTimeout(() => playAlarmSound(!!a.fuelAlarm), 3000);
-    setTimeout(() => playAlarmSound(!!a.fuelAlarm), 6000);
+    setTimeout(() => { if (!alarmDismissed) playAlarmSound(!!a.fuelAlarm); }, 3000);
+    setTimeout(() => { if (!alarmDismissed) playAlarmSound(!!a.fuelAlarm); }, 6000);
 
     // ④ نافذة منبه داخلية تظهر فوق كل شيء
     if (!a.fuelAlarm) showAlarmOverlay(alarmTitle, alarmDesc, a.icon);
@@ -2631,6 +2583,7 @@ function checkAlarms() {
 
 // ─── نافذة المنبه الداخلية ───────────────────────────────────────────────────
 let alarmOverlayInterval = null;
+let alarmDismissed = false;
 
 function showAlarmOverlay(title, desc, icon) {
   // إزالة أي نافذة سابقة
@@ -2693,12 +2646,23 @@ function showAlarmOverlay(title, desc, icon) {
   setTimeout(() => dismissAlarmOverlay(), 5 * 60 * 1000);
 }
 
+function stopAllSounds() {
+  alarmDismissed = true;
+  try {
+    if (sharedAudioCtx) {
+      // إغلاق الـ AudioContext لإيقاف كل الأصوات فوراً
+      sharedAudioCtx.close();
+      sharedAudioCtx = null;
+    }
+  } catch(e) {}
+  if ('vibrate' in navigator) navigator.vibrate(0);
+}
+
 function dismissAlarmOverlay() {
   clearInterval(alarmOverlayInterval);
   alarmOverlayInterval = null;
   document.getElementById('alarmOverlay')?.remove();
-  // إيقاف الاهتزاز
-  if ('vibrate' in navigator) navigator.vibrate(0);
+  stopAllSounds();
 }
 
 // ─── ⛽ Fuel Overlay Logic ────────────────────────────────────────────────────
