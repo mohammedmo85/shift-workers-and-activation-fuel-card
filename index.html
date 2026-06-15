@@ -85,6 +85,7 @@
   });
 })();
 </script>
+<link rel="manifest" href="./manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@700&display=swap" rel="stylesheet">
 <style>
@@ -3098,10 +3099,7 @@ self.addEventListener('fetch', e => {
 `;
 
   // تسجيل الـ SW من Blob
-  const blob = new Blob([swCode], { type: 'application/javascript' });
-  const swUrl = URL.createObjectURL(blob);
-
-  navigator.serviceWorker.register(swUrl, { scope: '/' })
+  navigator.serviceWorker.register('./sw.js', { scope: './' })
     .then(reg => {
       console.log('[SW] مسجّل بنجاح');
 
