@@ -2567,47 +2567,97 @@ function checkAlarms() {
 }
 
 // ─── بانر تنبيه مرئي داخل التطبيق ───────────────────────────────────────────
-let _inAppBannerTimer = null;
+let _inAppBannerHideTimer = null;   // مؤقت الإخفاء بعد 15 ثانية
+let _inAppBannerRepeatTimer = null; // مؤقت التكرار كل 10 دقائق
+let _inAppBannerDismissed = false;  // هل أغلقه المستخدم يدوياً؟
+
+document.head.insertAdjacentHTML('beforeend',
+  `<style>
+    @keyframes bannerSlideDown{from{transform:translateY(-100%);opacity:0}to{transform:translateY(0);opacity:1}}
+    @keyframes bannerSlideUp{from{transform:translateY(0);opacity:1}to{transform:translateY(-100%);opacity:0}}
+    @keyframes bannerPulse{0%,100%{box-shadow:0 4px 24px rgba(0,0,0,0.7)}50%{box-shadow:0 4px 32px rgba(109,184,122,0.4)}}
+  </style>`
+);
+
+function dismissInAppBanner() {
+  _inAppBannerDismissed = true;
+  clearTimeout(_inAppBannerHideTimer);
+  clearTimeout(_inAppBannerRepeatTimer);
+  const banner = document.getElementById('inAppAlarmBanner');
+  if (!banner) return;
+  banner.style.animation = 'bannerSlideUp 0.3s ease forwards';
+  setTimeout(() => { if (banner && banner.parentNode) banner.remove(); }, 300);
+}
+
 function showInAppAlertBanner(title, body, isFuel) {
+  // أول استدعاء: نضبط حالة الإغلاق
+  _inAppBannerDismissed = false;
+  _renderBanner(title, body, isFuel);
+
+  // بعد 15 ثانية: إخفاء البانر (لكن نكمل التكرار)
+  clearTimeout(_inAppBannerHideTimer);
+  _inAppBannerHideTimer = setTimeout(() => {
+    const banner = document.getElementById('inAppAlarmBanner');
+    if (banner && !_inAppBannerDismissed) {
+      banner.style.animation = 'bannerSlideUp 0.3s ease forwards';
+      setTimeout(() => { if (banner && banner.parentNode) banner.remove(); }, 300);
+    }
+    // جدولة التكرار بعد 10 دقائق
+    _scheduleRepeat(title, body, isFuel);
+  }, 15000);
+}
+
+function _scheduleRepeat(title, body, isFuel) {
+  if (_inAppBannerDismissed) return;
+  clearTimeout(_inAppBannerRepeatTimer);
+  _inAppBannerRepeatTimer = setTimeout(() => {
+    if (_inAppBannerDismissed) return;
+    // أعد إظهار البانر والصوت
+    _renderBanner(title, body, isFuel);
+    playAlarmSound(isFuel);
+    // إخفاء بعد 15 ثانية ثم تكرار مرة أخرى
+    clearTimeout(_inAppBannerHideTimer);
+    _inAppBannerHideTimer = setTimeout(() => {
+      const banner = document.getElementById('inAppAlarmBanner');
+      if (banner && !_inAppBannerDismissed) {
+        banner.style.animation = 'bannerSlideUp 0.3s ease forwards';
+        setTimeout(() => { if (banner && banner.parentNode) banner.remove(); }, 300);
+      }
+      _scheduleRepeat(title, body, isFuel);
+    }, 15000);
+  }, 10 * 60 * 1000); // 10 دقائق
+}
+
+function _renderBanner(title, body, isFuel) {
   let banner = document.getElementById('inAppAlarmBanner');
   if (!banner) {
     banner = document.createElement('div');
     banner.id = 'inAppAlarmBanner';
-    banner.style.cssText = `
-      position:fixed; top:0; left:0; right:0; z-index:999999;
-      background:${isFuel ? 'linear-gradient(135deg,#1a1200,#2a1e00)' : 'linear-gradient(135deg,#0d1a1f,#0d1a14)'};
-      border-bottom:2px solid ${isFuel ? '#e0a84a' : '#c9a84c'};
-      padding:14px 16px; display:flex; align-items:center; gap:12px;
-      box-shadow:0 4px 24px rgba(0,0,0,0.7);
-      animation:bannerSlideDown 0.35s cubic-bezier(0.34,1.3,0.64,1);
-      font-family:Tajawal,Arial,sans-serif; direction:rtl;
-    `;
-    document.head.insertAdjacentHTML('beforeend',
-      `<style>@keyframes bannerSlideDown{from{transform:translateY(-100%);opacity:0}to{transform:translateY(0);opacity:1}}
-       @keyframes bannerSlideUp{from{transform:translateY(0);opacity:1}to{transform:translateY(-100%);opacity:0}}</style>`
-    );
     document.body.prepend(banner);
   }
-  banner.style.background = isFuel
-    ? 'linear-gradient(135deg,#1a1200,#2a1e00)'
-    : 'linear-gradient(135deg,#0d1a1f,#0d1a14)';
-  banner.style.borderBottomColor = isFuel ? '#e0a84a' : '#6db87a';
-  banner.innerHTML = `
-    <span style="font-size:28px;line-height:1">${isFuel ? '⛽' : '🔔'}</span>
-    <div style="flex:1;">
-      <div style="font-size:14px;font-weight:700;color:${isFuel ? '#f0c060' : '#6db87a'};margin-bottom:2px;">${title}</div>
-      <div style="font-size:12px;color:#ccc;">${body}</div>
-    </div>
-    <button onclick="document.getElementById('inAppAlarmBanner').style.animation='bannerSlideUp 0.3s ease forwards';setTimeout(()=>{let b=document.getElementById('inAppAlarmBanner');if(b)b.remove();},300);"
-      style="background:transparent;border:1px solid #444;color:#aaa;border-radius:8px;padding:5px 10px;cursor:pointer;font-size:12px;font-family:inherit;">✕</button>
+  banner.style.cssText = `
+    position:fixed; top:0; left:0; right:0; z-index:999999;
+    background:${isFuel ? 'linear-gradient(135deg,#1a1200,#2a1e00)' : 'linear-gradient(135deg,#0a1a10,#0d1f14)'};
+    border-bottom:3px solid ${isFuel ? '#e0a84a' : '#6db87a'};
+    padding:14px 16px; display:flex; align-items:center; gap:12px;
+    box-shadow:0 4px 24px rgba(0,0,0,0.7);
+    animation:bannerSlideDown 0.35s cubic-bezier(0.34,1.3,0.64,1);
+    font-family:Tajawal,Arial,sans-serif; direction:rtl;
   `;
-  banner.style.animation = 'bannerSlideDown 0.35s cubic-bezier(0.34,1.3,0.64,1)';
-
-  clearTimeout(_inAppBannerTimer);
-  _inAppBannerTimer = setTimeout(() => {
-    banner.style.animation = 'bannerSlideUp 0.3s ease forwards';
-    setTimeout(() => { if (banner.parentNode) banner.remove(); }, 300);
-  }, 15000); // يختفي بعد 15 ثانية
+  // عداد الثواني المتبقية قبل التكرار
+  banner.innerHTML = `
+    <span style="font-size:30px;line-height:1">${isFuel ? '⛽' : '🔔'}</span>
+    <div style="flex:1;">
+      <div style="font-size:14px;font-weight:700;color:${isFuel ? '#f0c060' : '#6db87a'};margin-bottom:3px;">${title}</div>
+      <div style="font-size:12px;color:#ccc;">${body}</div>
+      <div style="font-size:10px;color:#666;margin-top:4px;">🔁 يتكرر كل ١٠ دقائق حتى الإغلاق اليدوي</div>
+    </div>
+    <button onclick="dismissInAppBanner()"
+      style="background:rgba(232,122,122,0.15);border:1px solid #e87a7a;color:#e87a7a;border-radius:8px;
+             padding:7px 12px;cursor:pointer;font-size:13px;font-family:inherit;font-weight:700;white-space:nowrap;">
+      إيقاف ✕
+    </button>
+  `;
 }
 
 
