@@ -1,6 +1,6 @@
 {
-  "name": "حاسبة NOC — شركة نفط الشمال",
-  "short_name": "حاسبة NOC",
+  "name": "بصمة المناوبين — شركة نفط الشمال",
+  "short_name": "بصمة المناوبين",
   "description": "تقويم وجدول وجبات ومنبهات بصمات شركة نفط الشمال",
   "start_url": "./index.html",
   "display": "standalone",
@@ -11,13 +11,13 @@
   "dir": "rtl",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "icon-512.png",
+      "src": "icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
