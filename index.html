@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>دوام المناوبين و البصمات</title>
+<title>حاسبة NOC</title>
 
 <!-- ═══ PWA Meta Tags ═══════════════════════════════════════════════════════ -->
-<meta name="application-name" content="دوام المناوبين و البصمات">
+<meta name="application-name" content="حاسبة NOC">
 <meta name="description" content="تقويم وجدول وجبات شركة نفط الشمال">
 <meta name="theme-color" content="#0d0d14">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="دوام المناوبين و البصمات">
+<meta name="apple-mobile-web-app-title" content="حاسبة NOC">
 <meta name="msapplication-tap-highlight" content="no">
 
 <!-- ═══ PWA Manifest + Icons مضمّنة ════════════════════════════════════════ -->
@@ -41,8 +41,8 @@
   const icon512 = generateIcon(512);
 
   const manifest = {
-    name: "دوام المناوبين و البصمات — شركة نفط الشمال",
-    short_name: "دوام المناوبين و البصمات",
+    name: "حاسبة NOC — شركة نفط الشمال",
+    short_name: "حاسبة NOC",
     description: "تقويم وجدول وجبات ومنبهات بصمات شركة نفط الشمال",
     start_url: "./",
     display: "standalone",
@@ -85,7 +85,6 @@
   });
 })();
 </script>
-<link rel="manifest" href="./manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@700&display=swap" rel="stylesheet">
 <style>
@@ -624,28 +623,6 @@
     line-height: 1.4;
   }
   .alarm-item.active-alarm .alarm-desc { color: var(--light); opacity: 0.7; }
-
-  .phone-alarm-btn {
-    background: rgba(201,168,76,0.1);
-    border: 1px solid rgba(201,168,76,0.3);
-    border-radius: 8px;
-    color: var(--accent);
-    font-size: 16px;
-    width: 34px;
-    height: 34px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    flex-shrink: 0;
-    transition: all 0.2s ease;
-    padding: 0;
-  }
-  .phone-alarm-btn:hover, .phone-alarm-btn:active {
-    background: rgba(201,168,76,0.25);
-    border-color: var(--accent);
-    transform: scale(1.08);
-  }
 
   .alarm-set-all {
     display: block;
@@ -1523,7 +1500,6 @@
         <!-- زر الملفات: يفتح مدير الملفات -->
         <input type="file" id="ringtoneFileInput" accept=".mp3,.wav,.ogg,.m4a,.aac,.flac,.opus,audio/*" style="display:none" onchange="loadCustomRingtone(this)">
         <div class="ringtone-custom-name" id="ringtoneCustomName"></div>
-
       </div>
     </div>
   </div>
@@ -1967,8 +1943,8 @@ function toggleShiftFilter(cls) {
     ALARMS.filter(a => !a.fuelAlarm).forEach(a => {
       alarmStates[a.id] = true;
       localStorage.setItem('alarmState_' + a.id, 'true');
-      // التذكير المرتبط بـ nextDay (alarm-07n-50) يحمل نفس offset بداية اليوم التالي
-      const isNextDay = a.nextDay || (a.reminder && a.id.includes('07n'));
+      // التذكير المرتبط بـ nextDay يحمل نفس offset بداية اليوم التالي
+      const isNextDay = a.nextDay || false;
       a._daysOffset = isNextDay ? daysOffset + 1 : daysOffset;
     });
 
@@ -2069,12 +2045,11 @@ window.renderMiladi = function() {
 
 // ─── Alarm System ────────────────────────────────────────────────────────────
 const ALARMS = [
-  { id: 'alarm-07',    hour: 7,  min: 0,  label: '٠٧:٠٠', desc: 'بصمة صباحية — بداية الوجبة',        icon: '🌅' },
-  { id: 'alarm-13',    hour: 13, min: 0,  label: '١٣:٠٠', desc: 'بصمة ظهرية',                         icon: '☀️' },
-  { id: 'alarm-18',    hour: 18, min: 0,  label: '١٨:٠٠', desc: 'بصمة مسائية',                        icon: '🌆' },
-  { id: 'alarm-23',    hour: 23, min: 0,  label: '٢٣:٠٠', desc: 'بصمة ليلية',                         icon: '🌙' },
-  { id: 'alarm-07n',   hour: 7,  min: 0,  label: '٠٧:٠٠', desc: 'بصمة صباحية — نهاية الوجبة',        icon: '🌄', nextDay: true },
-  { id: 'fuel-alarm',  hour: 12, min: 0,  label: '١٢:٠٠', desc: 'تنبيه حصة البنزين — الاستلام غداً',  icon: '⛽', fuelAlarm: true },
+  { id: 'alarm-07',  hour: 7,  min: 0, label: '٠٧:٠٠', desc: 'بصمة صباحية — بداية الوجبة', icon: '🌅' },
+  { id: 'alarm-13',  hour: 13, min: 0, label: '١٣:٠٠', desc: 'بصمة ظهرية',                  icon: '☀️' },
+  { id: 'alarm-18',  hour: 18, min: 0, label: '١٨:٠٠', desc: 'بصمة مسائية',                 icon: '🌆' },
+  { id: 'alarm-23',  hour: 23, min: 0, label: '٢٣:٠٠', desc: 'بصمة ليلية',                  icon: '🌙' },
+  { id: 'alarm-07n', hour: 7,  min: 0, label: '٠٧:٠٠', desc: 'بصمة صباحية — نهاية الوجبة', icon: '🌄', nextDay: true },
 ];
 
 // ─── Fuel Alarm Logic ─────────────────────────────────────────────────────────
@@ -2155,9 +2130,6 @@ function renderAlarms() {
   ALARMS.forEach(a => {
     const item = document.createElement('div');
 
-    // Fuel alarm: skip rendering in list
-    if (a.fuelAlarm) return;
-
     item.className = 'alarm-item' + (alarmStates[a.id] ? ' active-alarm' : '');
     item.id = 'item-' + a.id;
 
@@ -2187,7 +2159,6 @@ function renderAlarms() {
           <div class="alarm-desc">${a.desc} ${timeTag}</div>
         </div>
       </div>
-      <button class="phone-alarm-btn" title="ضبط في منبه الهاتف" onclick="event.stopPropagation();openPhoneAlarm(${a.hour},${a.min})">⏰</button>
     `;
     item.addEventListener('click', () => toggleAlarm(a.id));
     list.appendChild(item);
@@ -2255,38 +2226,6 @@ function setAllAlarms() {
   renderAlarms();
   showAlarmStatus(allOn ? '🔕 تم إيقاف جميع المنبهات' : '✅ تم تفعيل جميع المنبهات');
   if (!allOn) requestNotificationPermission();
-}
-
-function openPhoneAlarm(hour, min) {
-  const hh = String(hour).padStart(2, '0');
-  const mm = String(min).padStart(2, '0');
-
-  // Android: intent رابط مباشر لتطبيق الساعة
-  const intentUrl = `intent://alarm#Intent;S.hours=${hour};S.minutes=${min};S.message=دوام المناوبين و البصمات;S.vibrate=true;S.skip_ui=false;end`;
-
-  // iOS: رابط clock (يفتح التطبيق فقط، لا يضبط الوقت)
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-
-  if (isIOS) {
-    // iOS لا يدعم ضبط المنبه تلقائياً — نعرض رسالة
-    showAlarmStatus(`⏰ iOS: افتح تطبيق الساعة وأضف منبه الساعة ${hh}:${mm}`);
-    window.open('clock-alarm://', '_blank');
-    return;
-  }
-
-  // Android
-  try {
-    window.location.href = intentUrl;
-  } catch(e) {
-    // fallback: نسخ الوقت
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(`${hh}:${mm}`).then(() => {
-        showAlarmStatus(`📋 تم نسخ الوقت ${hh}:${mm} — افتح تطبيق الساعة والصقه`);
-      });
-    } else {
-      showAlarmStatus(`⏰ افتح تطبيق الساعة وأضف منبه الساعة ${hh}:${mm}`);
-    }
-  }
 }
 
 function showAlarmStatus(msg) {
@@ -2588,133 +2527,29 @@ function checkAlarms() {
     const alarmDesc = a.fuelAlarm
       ? '⛽ غداً يوم استلام حصة البنزين!'
       : `${a.icon} ${a.desc} — ${a.label}`;
-    const alarmTitle = a.fuelAlarm ? '⛽ تنبيه حصة البنزين' : '🔔 تنبيه بصمة';
+    const alarmTitle = a.fuelAlarm ? '⛽ تنبيه حصة البنزين' : '🔔 تنبيه وجبة';
 
-    // ① إشعار النظام عبر Service Worker (يظهر على الشاشة المقفلة)
     if ('serviceWorker' in navigator && Notification.permission === 'granted') {
       navigator.serviceWorker.ready.then(reg => {
         reg.showNotification(alarmTitle, {
           body: alarmDesc,
           icon: '/favicon.ico',
           badge: '/favicon.ico',
-          vibrate: [500,200,500,200,500,200,500,200,500],
+          vibrate: [400, 100, 400, 100, 400],
           requireInteraction: true,
-          silent: false,
           tag: a.id,
-          renotify: true,
           data: { url: location.href }
         });
       });
     } else if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification(alarmTitle, {
-        body: alarmDesc,
-        icon: '/favicon.ico',
-        requireInteraction: true,
-        silent: false
-      });
+      new Notification(alarmTitle, { body: alarmDesc, icon: '/favicon.ico' });
     }
-
-    // ② اهتزاز مستمر
-    if ('vibrate' in navigator) {
-      navigator.vibrate([600,200,600,200,600,200,600,200,600,200,600]);
-    }
-
-    // ③ صوت متكرر 3 مرات
-    alarmDismissed = false;
+    showAlarmStatus(`🔔 ${alarmDesc}`);
     playAlarmSound(!!a.fuelAlarm);
-    setTimeout(() => { if (!alarmDismissed) playAlarmSound(!!a.fuelAlarm); }, 3000);
-    setTimeout(() => { if (!alarmDismissed) playAlarmSound(!!a.fuelAlarm); }, 6000);
-
-    // ④ نافذة منبه داخلية تظهر فوق كل شيء
-    if (!a.fuelAlarm) showAlarmOverlay(alarmTitle, alarmDesc, a.icon);
     if (a.fuelAlarm) showFuelOverlay();
   });
 }
 
-
-// ─── نافذة المنبه الداخلية ───────────────────────────────────────────────────
-let alarmOverlayInterval = null;
-let alarmDismissed = false;
-
-function showAlarmOverlay(title, desc, icon) {
-  // إزالة أي نافذة سابقة
-  document.getElementById('alarmOverlay')?.remove();
-
-  const overlay = document.createElement('div');
-  overlay.id = 'alarmOverlay';
-  overlay.style.cssText = `
-    position:fixed;inset:0;z-index:999999;
-    background:rgba(0,0,0,0.95);
-    display:flex;align-items:center;justify-content:center;
-    animation:alarmOverlayIn 0.3s ease;
-    font-family:'Tajawal','Segoe UI',Tahoma,Arial,sans-serif;
-  `;
-
-  const now5 = new Date();
-  const hh = String(now5.getHours()).padStart(2,'0');
-  const mm = String(now5.getMinutes()).padStart(2,'0');
-
-  overlay.innerHTML = `
-    <style>
-      @keyframes alarmOverlayIn { from{opacity:0;transform:scale(0.9)} to{opacity:1;transform:scale(1)} }
-      @keyframes alarmPulseRing { 0%,100%{transform:scale(1);opacity:0.6} 50%{transform:scale(1.3);opacity:0.1} }
-      @keyframes alarmIconBounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
-      #alarmOverlay .ao-ring {
-        position:absolute;width:160px;height:160px;border-radius:50%;
-        border:3px solid var(--accent,#c9a84c);
-        animation:alarmPulseRing 1.2s ease-in-out infinite;
-      }
-      #alarmOverlay .ao-ring:nth-child(2){animation-delay:0.4s;width:200px;height:200px;}
-      #alarmOverlay .ao-ring:nth-child(3){animation-delay:0.8s;width:240px;height:240px;}
-    </style>
-    <div style="text-align:center;position:relative;padding:40px 30px;max-width:340px;width:92%;">
-      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;">
-        <div class="ao-ring"></div><div class="ao-ring"></div><div class="ao-ring"></div>
-      </div>
-      <div style="font-size:64px;margin-bottom:10px;animation:alarmIconBounce 1s ease-in-out infinite;">${icon}</div>
-      <div style="font-size:56px;font-weight:700;color:#c9a84c;letter-spacing:2px;margin-bottom:6px;">${hh}:${mm}</div>
-      <div style="font-size:18px;font-weight:700;color:#f0ead6;margin-bottom:8px;">${title}</div>
-      <div style="font-size:13px;color:#a09880;margin-bottom:32px;line-height:1.6;">${desc}</div>
-      <button onclick="dismissAlarmOverlay()" style="
-        width:100%;padding:16px;border-radius:16px;border:none;
-        background:linear-gradient(135deg,#c9a84c,#a07830);
-        color:#0d0d14;font-size:16px;font-weight:700;
-        cursor:pointer;font-family:inherit;letter-spacing:0.5px;
-        box-shadow:0 4px 20px rgba(201,168,76,0.4);
-      ">✅ إيقاف المنبه</button>
-    </div>
-  `;
-
-  document.body.appendChild(overlay);
-
-  // اهتزاز متكرر كل 3 ثوانٍ حتى الإغلاق
-  alarmOverlayInterval = setInterval(() => {
-    if ('vibrate' in navigator) navigator.vibrate([400,100,400]);
-    playAlarmSound(false);
-  }, 4000);
-
-  // إغلاق تلقائي بعد 5 دقائق
-  setTimeout(() => dismissAlarmOverlay(), 5 * 60 * 1000);
-}
-
-function stopAllSounds() {
-  alarmDismissed = true;
-  try {
-    if (sharedAudioCtx) {
-      // إغلاق الـ AudioContext لإيقاف كل الأصوات فوراً
-      sharedAudioCtx.close();
-      sharedAudioCtx = null;
-    }
-  } catch(e) {}
-  if ('vibrate' in navigator) navigator.vibrate(0);
-}
-
-function dismissAlarmOverlay() {
-  clearInterval(alarmOverlayInterval);
-  alarmOverlayInterval = null;
-  document.getElementById('alarmOverlay')?.remove();
-  stopAllSounds();
-}
 
 // ─── ⛽ Fuel Overlay Logic ────────────────────────────────────────────────────
 let foAutoCloseInterval = null;
@@ -3099,7 +2934,10 @@ self.addEventListener('fetch', e => {
 `;
 
   // تسجيل الـ SW من Blob
-  navigator.serviceWorker.register('./sw.js', { scope: './' })
+  const blob = new Blob([swCode], { type: 'application/javascript' });
+  const swUrl = URL.createObjectURL(blob);
+
+  navigator.serviceWorker.register(swUrl, { scope: '/' })
     .then(reg => {
       console.log('[SW] مسجّل بنجاح');
 
