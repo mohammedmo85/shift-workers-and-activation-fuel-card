@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>بصمة المناوبين</title>
+<title>دوام المناوبين و البصمات</title>
 
 <!-- ═══ PWA Meta Tags ═══════════════════════════════════════════════════════ -->
-<meta name="application-name" content="بصمة المناوبين">
+<meta name="application-name" content="دوام المناوبين و البصمات">
 <meta name="description" content="تقويم وجدول وجبات شركة نفط الشمال">
 <meta name="theme-color" content="#0d0d14">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="بصمة المناوبين">
+<meta name="apple-mobile-web-app-title" content="دوام المناوبين و البصمات">
 <meta name="msapplication-tap-highlight" content="no">
 
 <!-- ═══ PWA Manifest + Icons مضمّنة ════════════════════════════════════════ -->
@@ -41,8 +41,8 @@
   const icon512 = generateIcon(512);
 
   const manifest = {
-    name: "بصمة المناوبين — شركة نفط الشمال",
-    short_name: "بصمة المناوبين",
+    name: "دوام المناوبين و البصمات — شركة نفط الشمال",
+    short_name: "دوام المناوبين و البصمات",
     description: "تقويم وجدول وجبات ومنبهات بصمات شركة نفط الشمال",
     start_url: "./",
     display: "standalone",
@@ -2262,7 +2262,7 @@ function openPhoneAlarm(hour, min) {
   const mm = String(min).padStart(2, '0');
 
   // Android: intent رابط مباشر لتطبيق الساعة
-  const intentUrl = `intent://alarm#Intent;S.hours=${hour};S.minutes=${min};S.message=بصمة المناوبين;S.vibrate=true;S.skip_ui=false;end`;
+  const intentUrl = `intent://alarm#Intent;S.hours=${hour};S.minutes=${min};S.message=دوام المناوبين و البصمات;S.vibrate=true;S.skip_ui=false;end`;
 
   // iOS: رابط clock (يفتح التطبيق فقط، لا يضبط الوقت)
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
