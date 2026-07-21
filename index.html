@@ -1110,20 +1110,23 @@ if(document.fonts && document.fonts.ready){
 async function exportPDF(){
   const sheet = document.getElementById('sheet');
 
-  // ====== تحديد الصفوف المسموح تصديرها: فقط الصفوف التي كُتب فيها نص داخل خلية "الحوادث" أو "الملاحظات" ======
-  // (الصفوف المخفية أصلاً بسبب فلتر الغرفة، أو التي لا تحتوي أي نص في الحوادث والملاحظات معًا، لا تُصدَّر ضمن الـ PDF)
+  // ====== تحديد الصفوف المسموح تصديرها: الصفوف التي كُتب فيها نص داخل خلية "الحوادث" أو "الملاحظات"،
+  // أو تم فيها تفعيل مربع "العاكسة الكهربائية أو UPS" أو "حالة العاكسة أو UPS" ======
+  // (الصفوف المخفية أصلاً بسبب فلتر الغرفة، أو التي لا تحقق أيًا من الشروط أعلاه، لا تُصدَّر ضمن الـ PDF)
   const rowsToKeepIds = new Set();
   [...tbody.children].forEach(tr=>{
     if(tr.style.display === 'none') return; // غير معروضة حاليًا (غرفة أخرى) -> لا تُصدَّر
     const incVal = (tr.querySelector('.f-inc')?.value || '').trim();
     const notesVal = (tr.querySelector('.f-notes')?.value || '').trim();
-    if(incVal.length > 0 || notesVal.length > 0){
+    const reflectorOn = tr.querySelector('.f-reflector')?.checked;
+    const reflectorStatusOn = tr.querySelector('.f-reflector-status')?.checked;
+    if(incVal.length > 0 || notesVal.length > 0 || reflectorOn || reflectorStatusOn){
       rowsToKeepIds.add(tr.dataset.id);
     }
   });
 
   if(rowsToKeepIds.size === 0){
-    alert('لا توجد أي بيانات مكتوبة في خلايا "الحوادث" أو "الملاحظات" ضمن الغرفة المعروضة حاليًا، لذا لا يوجد ما يمكن تصديره كـ PDF.');
+    alert('لا توجد أي بيانات مكتوبة في خلايا "الحوادث" أو "الملاحظات"، ولا أي تفعيل لمربعات "العاكسة الكهربائية أو UPS" ضمن الغرفة المعروضة حاليًا، لذا لا يوجد ما يمكن تصديره كـ PDF.');
     return;
   }
   // build a clean clone for export (inputs -> static text)
